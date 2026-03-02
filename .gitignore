@@ -1,0 +1,15 @@
+# Frontend
+frontend/node_modules/
+frontend/.next/
+
+# Backend and AI
+backend/venv/
+ai/venv/
+**/__pycache__/
+
+# firmware
+firmware/.pio/
+firmware/build/
+
+# Secret keys
+.env
