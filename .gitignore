@@ -16,12 +16,17 @@ frontend/next-env.d.ts
 frontend/.vercel
 
 # --- Backend & AI (Python) ---
-backend/venv/
-ai/venv/
-ai/datasets/
-**/__pycache__/
-*.py[cod]
+# Ігноруємо ВСІ папки .venv в будь-якому місці проєкту
+**/.venv/
+.venv/
+venv/
 
+# Ігноруємо кеш пітона
+**/__pycache__/
+
+# Ігноруємо секрети
+.env
+alembic.ini
 # --- Firmware ---
 firmware/.pio/
 firmware/build/
