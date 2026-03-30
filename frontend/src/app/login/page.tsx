@@ -22,7 +22,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { loginSchema, LoginFormData } from "@/schemas/authSchema";
 import { TopoBackground } from "@/components/TopoBackground";
-import logoImage from "@/public/assets/logo.png";
+import logoImage from "../../../public/logo.png";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -79,7 +79,7 @@ export default function LoginPage() {
             width={200}
             height={64}
             priority
-            className="h-16 w-auto object-contain mb-4"
+            className="h-26 w-auto object-contain"
           />
           <p className="text-gray-400 text-sm mt-1">Smart Beehive Management</p>
         </motion.div>
