@@ -44,13 +44,12 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // Імітація запиту - замініть на fetch('/api/login', ...)
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log("Login data:", data);
       toast.success("Login successful! Welcome back.");
 
-      router.push("/"); // Перехід на головну
+      router.push("/");
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
     } finally {
@@ -68,7 +67,6 @@ export default function LoginPage() {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md z-10"
       >
-        {/* Logo/Brand */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -78,15 +76,14 @@ export default function LoginPage() {
           <Image
             src={logoImage}
             alt="SAMBEE Logo"
-            width={200} // Вкажіть приблизну ширину
-            height={64} // Вкажіть висоту (h-16)
-            priority // Пріоритет завантаження для LCP
+            width={200}
+            height={64}
+            priority
             className="h-16 w-auto object-contain mb-4"
           />
           <p className="text-gray-400 text-sm mt-1">Smart Beehive Management</p>
         </motion.div>
 
-        {/* Login Card */}
         <Card className="bg-black/50 backdrop-blur-lg border-yellow-500/20 shadow-2xl shadow-yellow-500/5">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl text-white text-center">
@@ -98,7 +95,6 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-gray-300">
                   Email Address
@@ -130,7 +126,6 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Password Field */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-gray-300">
                   Password
@@ -173,7 +168,6 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Forgot Password Link */}
               <div className="flex justify-end">
                 <Link
                   href="/password-recovery"
@@ -183,7 +177,6 @@ export default function LoginPage() {
                 </Link>
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 disabled={isLoading}
@@ -199,7 +192,6 @@ export default function LoginPage() {
                 )}
               </Button>
 
-              {/* Divider */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-yellow-500/20"></div>
@@ -211,7 +203,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Register Link */}
               <Link href="/register" className="block w-full">
                 <Button
                   type="button"
@@ -225,7 +216,6 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        {/* Footer */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
