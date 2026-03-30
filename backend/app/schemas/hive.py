@@ -1,27 +1,25 @@
-import datetime
-from typing import Optional
-from pydantic import BaseModel, Field
+from sqlalchemy import DateTime
+from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
 
 
 class HiveBase(BaseModel):
-    name: str = Field(ge=1, le=25)
-    location: Optional[str] = None
+    name: str
+    location: str
 
 
 class HiveCreate(HiveBase):
-    pass
+    api_key: str
 
 
 class HiveUpdate(BaseModel):
-    name: Optional[str] = None
-    location: Optional[str] = None
+    name: str | None = None
+    location: str | None = None
+    api_key: str | None = None
 
 
 class HiveOut(HiveBase):
     id: int
-    owner_id: int
+    user_id: int
     created_at: datetime
-
-
-class Config:
-    from_attributes = True

@@ -1,17 +1,22 @@
-from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UserBase(BaseModel):
-    email: EmailStr 
+    email: EmailStr
+    is_active: bool = True
 
 
-class UserCreate(UserBase):
-    password: str = Field(ge=8, le=25, )
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserUpdate(BaseModel):
+    email: EmailStr | None = None
+    password: str | None = None
+    is_active: bool | None = None
+
 
 class UserOut(UserBase):
-    id: int 
-    is_active: bool
-
-    class Config:
-        from_atributes = True
+    id: int
+    model_config = ConfigDict(from_attributes=True)
