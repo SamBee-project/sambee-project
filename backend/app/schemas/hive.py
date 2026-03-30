@@ -1,7 +1,5 @@
 from sqlalchemy import DateTime
 from pydantic import BaseModel, ConfigDict, EmailStr
-
-
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
