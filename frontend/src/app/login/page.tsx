@@ -1,101 +1,240 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { loginSchema, LoginFields } from "@/schemas/auth.schema";
+import { motion } from "framer-motion";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { loginSchema, LoginFormData } from "@/schemas/authSchema";
+import { TopoBackground } from "@/components/TopoBackground";
+import logoImage from "@/public/assets/logo.png";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFields>({
+    formState: { errors },
+  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const onSubmit = (data: LoginFields) => {
-    console.log("Дані готові для відправки", data);
-    // тут треба робити виклик для RTK Query
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    try {
+      // Імітація запиту - замініть на fetch('/api/login', ...)
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      console.log("Login data:", data);
+      toast.success("Login successful! Welcome back.");
+
+      router.push("/"); // Перехід на головну
+    } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <main className="relative min-h-screen w-full bg-main-black flex flex-col items-center justify-start pt-25 p-6 overflow-hidden">
-      <div className="absolute top-0 right-0 w-64 h-64 overflow-hidden pointer-events-none">
-        <div className="absolute z-10 -top-5 -right-12 w-96 h-3 bg-main-yellow rotate-35" />
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      <TopoBackground />
 
-        <div className="absolute z-10 top-1 -right-12 w-96 h-3 bg-main-yellow rotate-35" />
-      </div>
-
-      <div className="absolute inset-0 pointer-events-none bg-cover bg-[url('/bg.png')]" />
-
-      <div className="relative p-5 z-10 w-full max-w-sm flex flex-col items-center">
-        <Image src="/logo.png" alt="logo" width={252} height={144} />
-
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="w-full flex flex-col gap-6"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md z-10"
+      >
+        {/* Logo/Brand */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="flex flex-col items-center mb-8"
         >
-          <div className="flex flex-col gap-1">
-            <label className="text-main-white font-orbitron text-center text-xl uppercase tracking-widest">
-              Login
-            </label>
+          <Image
+            src={logoImage}
+            alt="SAMBEE Logo"
+            width={200} // Вкажіть приблизну ширину
+            height={64} // Вкажіть висоту (h-16)
+            priority // Пріоритет завантаження для LCP
+            className="h-16 w-auto object-contain mb-4"
+          />
+          <p className="text-gray-400 text-sm mt-1">Smart Beehive Management</p>
+        </motion.div>
 
-            <input
-              {...register("login")}
-              type="text"
-              placeholder="Value"
-              className="w-full bg-main-black border placeholder:text-main-white border-main-white rounded-lg px-4 py-3 text-main-white font-orbitron focus:border-main-yellow outline-none transition-all"
-            />
-            {errors.login && (
-              <span className="text-red-500 text-xs font-orbitron">
-                {errors.login.message}
-              </span>
-            )}
-          </div>
+        {/* Login Card */}
+        <Card className="bg-black/50 backdrop-blur-lg border-yellow-500/20 shadow-2xl shadow-yellow-500/5">
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-2xl text-white text-center">
+              Welcome Back
+            </CardTitle>
+            <CardDescription className="text-gray-400 text-center">
+              Sign in to your account to continue
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-300">
+                  Email Address
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        {...field}
+                        className="pl-10 bg-black/50 border-yellow-500/30 text-white placeholder:text-gray-500 focus:border-yellow-500/50"
+                      />
+                    )}
+                  />
+                </div>
+                {errors.email && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs mt-1"
+                  >
+                    {errors.email.message}
+                  </motion.p>
+                )}
+              </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-main-white font-orbitron text-center text-xl uppercase tracking-widest">
-              Password
-            </label>
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-300">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        {...field}
+                        className="pl-10 pr-10 bg-black/50 border-yellow-500/30 text-white placeholder:text-gray-500 focus:border-yellow-500/50"
+                      />
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs mt-1"
+                  >
+                    {errors.password.message}
+                  </motion.p>
+                )}
+              </div>
 
-            <input
-              {...register("password")}
-              type="password"
-              placeholder="Value"
-              className="w-full bg-main-black border placeholder:text-main-white border-main-white rounded-lg px-4 py-3 text-main-white font-orbitron focus:border-main-yellow outline-none transition-all"
-            />
-            {errors.password && (
-              <span className="text-red-500 text-xs font-orbitron">
-                {errors.password.message}
-              </span>
-            )}
-          </div>
+              {/* Forgot Password Link */}
+              <div className="flex justify-end">
+                <Link
+                  href="/password-recovery"
+                  className="text-sm text-yellow-500 hover:text-yellow-400 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
 
-          <div className="flex flex-col gap-3">
-            <button className="w-full cursor-pointer bg-main-yellow text-main-black font-orbitron py-4 rounded-lg text-xl hover:bg-yellow-400 transition-colors">
-              Sign In
-            </button>
-
-            <div className="flex justify-between gap-2 ]">
-              <Link
-                href="/register"
-                className="flex-1 bg-main-yellow text-main-black font-orbitron text-[11px] py-2 text-center rounded-sm font-medium hover:opacity-90"
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium h-11"
               >
-                Register account
-              </Link>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
 
-              <Link
-                href="/forgot"
-                className="flex-1 bg-main-yellow text-main-black font-orbitron text-[11px] py-2 text-center rounded-sm font-medium hover:opacity-90"
-              >
-                forgot password
+              {/* Divider */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-yellow-500/20"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-black text-gray-400">
+                    New to SAMBEE?
+                  </span>
+                </div>
+              </div>
+
+              {/* Register Link */}
+              <Link href="/register" className="block w-full">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 h-11"
+                >
+                  Create an Account
+                </Button>
               </Link>
-            </div>
-          </div>
-        </form>
-      </div>
-    </main>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="text-center text-xs text-gray-500 mt-6"
+        >
+          © 2026 SAMBEE. Smart Beehive Management System
+        </motion.p>
+      </motion.div>
+    </div>
   );
 }
