@@ -1,46 +1,43 @@
 // src/main.cpp
 #include <Arduino.h>
 #include "sensors/temperature.h"
+#include "comm/mqtt_client.h"
 
-static int readingCount = 0;
+#define PUBLISH_INTERVAL_MS 5000  // відправляємо кожні 30 секунд
+
+static unsigned long lastPublishMs = 0;
 
 void setup() {
     Serial.begin(115200);
     delay(2000);
 
-    Serial.println("\n=== Smart Hive — BME280 Smoke Test ===");
-    Serial.println("Плата:   ESP32-S3-DevKitC-1");
-    Serial.println("Датчик:  BME280 (temp + humidity + pressure)");
-    Serial.println("I²C:     SDA=GPIO8, SCL=GPIO9");
-    Serial.println("======================================\n");
+    Serial.println("\n=== Smart Hive — старт ===");
 
     if (!initEnvironmentSensor()) {
-        Serial.println("[MAIN] Зупинка — датчик не ініціалізовано");
+        Serial.println("[MAIN] FATAL: датчик не ініціалізовано");
         while (true) { delay(1000); }
     }
 
-    Serial.println("[MAIN] Smoke test: 10 показників кожні 3 секунди\n");
+    if (!initComm()) {
+        Serial.println("[MAIN] WARN: немає з'єднання — дані не передаватимуться");
+        // Не зупиняємося — може підключитися пізніше через maintainComm()
+    }
+
+    Serial.println("[MAIN] Готово. Відправка кожні 30 с.\n");
 }
 
 void loop() {
-    if (readingCount >= 10) {
-        Serial.println("\n=== Smoke test завершено ===");
-        Serial.println("Всі показники отримано — датчик працює коректно.");
-        while (true) { delay(1000); }
+    maintainComm();
+
+    unsigned long now = millis();
+    if (now - lastPublishMs >= PUBLISH_INTERVAL_MS) {
+        lastPublishMs = now;
+
+        EnvironmentData data = readEnvironment();
+        if (data.valid) {
+            publishSensorData(data);
+        } else {
+            Serial.println("[MAIN] Показник пропущено — датчик повернув помилку");
+        }
     }
-
-    EnvironmentData data = readEnvironment();
-    readingCount++;
-
-    if (data.valid) {
-        Serial.printf("[%2d/10] T: %5.2f°C  |  RH: %5.2f%%  |  P: %.1f hPa\n",
-                      readingCount,
-                      data.temperature,
-                      data.humidity,
-                      data.pressure);
-    } else {
-        Serial.printf("[%2d/10] ПОМИЛКА — показник пропущено\n", readingCount);
-    }
-
-    delay(3000);
 }
