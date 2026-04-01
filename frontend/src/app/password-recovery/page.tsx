@@ -160,7 +160,74 @@ export default function PasswordRecovery() {
                 </Link>
               </form>
             )}
-            {/* Тут буде Success State */}
+            {emailSent && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                className="space-y-6"
+              >
+                <div className="flex flex-col items-center justify-center py-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                    className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4 border border-green-500/50"
+                  >
+                    <CheckCircle className="w-8 h-8 text-green-400" />
+                  </motion.div>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-center text-white mb-2"
+                  >
+                    Email sent to
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-center text-yellow-500 font-medium mb-4"
+                  >
+                    {emailValue}
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className="bg-black/50 border border-yellow-500/20 rounded-lg p-4 w-full"
+                  >
+                    <p className="text-sm text-gray-400 text-center">
+                      Please check your inbox and click the link to reset your
+                      password. The link will expire in 24 hours.
+                    </p>
+                  </motion.div>
+                </div>
+
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => setEmailSent(false)}
+                    variant="outline"
+                    className="w-full border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 h-11"
+                  >
+                    Try a Different Email
+                  </Button>
+
+                  <Link href="/login" className="block">
+                    <Button
+                      variant="ghost"
+                      className="w-full text-gray-400 hover:text-white hover:bg-white/5 h-11"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back to Sign In
+                    </Button>
+                  </Link>
+                </div>
+              </motion.div>
+            )}
           </CardContent>
         </Card>
 
