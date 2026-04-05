@@ -14,8 +14,8 @@ import {
   Zap,
   ArrowRight,
 } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/Button";
+import { Card, CardContent } from "../components/ui/Card";
 import { TopoBackground } from "../components/TopoBackground";
 import logoImage from "../../public/logo.png";
 import Image from "next/image";
