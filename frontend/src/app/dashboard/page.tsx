@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -25,14 +27,15 @@ import { Badge } from "../../components/ui/Badge";
 import { Alert, AlertDescription } from "../../components/ui/Alert";
 import { Button } from "../../components/ui/Button";
 import { toast } from "sonner";
+import { TopoBackground } from "@/components/TopoBackground";
 import {
   useGetHivesQuery,
   useGetAlertsQuery,
   useDismissAlertMutation,
-} from "../store/api/apiSlice";
-import { Hive } from "../types";
+} from "../../store/api/apiSlice";
+import { Hive } from "../../types";
 
-export function Dashboard() {
+export default function Dashboard() {
   const { data: hives, isLoading: hivesLoading } = useGetHivesQuery();
   const { data: alerts, isLoading: alertsLoading } = useGetAlertsQuery();
   const [dismissAlert] = useDismissAlertMutation();
@@ -122,6 +125,8 @@ export function Dashboard() {
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
+      <TopoBackground />
+
       <div>
         <h2 className="text-2xl font-bold text-white">Apiary Overview</h2>
         <p className="text-gray-400 mt-1">
