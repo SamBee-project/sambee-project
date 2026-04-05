@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { StoreProvider } from "@/store/StoreProvider";
 import { Header } from "../components/ui/Header"; // Імпортуємо наш новий хедер
+import { Footer } from "@/components/ui/Footer";
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
@@ -36,6 +37,7 @@ export default function RootLayout({
             {children}
           </main>
         </StoreProvider>
+        <Footer />
       </body>
     </html>
   );
