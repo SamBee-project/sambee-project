@@ -88,11 +88,11 @@ export const apiSlice = createApi({
       providesTags: ["Alerts"],
     }),
 
-    dismissAlert: builder.mutation<void, string>({
+    dismissAlert: builder.mutation<string, string>({
       queryFn: async (alertId) => {
         await delay(200);
         alerts = alerts.filter((a) => a.id !== alertId);
-        return { data: undefined };
+        return { data: alertId };
       },
       invalidatesTags: ["Alerts"],
     }),

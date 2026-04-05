@@ -14,9 +14,9 @@ import {
   Zap,
   ArrowRight,
 } from "lucide-react";
-import { Button } from "../components/ui/Button";
-import { Card, CardContent } from "../components/ui/Card";
-import { TopoBackground } from "../components/TopoBackground";
+import { Button } from "../../components/ui/Button";
+import { Card, CardContent } from "../../components/ui/Card";
+import { TopoBackground } from "../../components/TopoBackground";
 import { Footer } from "@/components/ui/Footer";
 
 export default function Welcome() {

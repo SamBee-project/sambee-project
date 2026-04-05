@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Orbitron } from "next/font/google";
 import localFont from "next/font/local";
-import "./globals.css";
+import "../globals.css";
 import { StoreProvider } from "@/store/StoreProvider";
-import { Header } from "../components/ui/Header"; // Імпортуємо наш новий хедер
-import { Footer } from "@/components/ui/Footer";
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
@@ -12,7 +10,7 @@ const orbitron = Orbitron({
 });
 
 const gruntGrotesk = localFont({
-  src: "../assets/fonts/GruntGrotesk-Bold.woff2",
+  src: "../../assets/fonts/GruntGrotesk-Bold.woff2",
   variable: "--font-grunt-grotesk",
 });
 
@@ -32,12 +30,10 @@ export default function RootLayout({
         className={`${orbitron.variable} ${gruntGrotesk.variable} antialiased bg-black text-white min-h-screen`}
       >
         <StoreProvider>
-          <Header />
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
             {children}
           </main>
         </StoreProvider>
-        <Footer />
       </body>
     </html>
   );

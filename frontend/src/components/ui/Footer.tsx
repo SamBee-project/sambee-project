@@ -1,9 +1,16 @@
+"use client";
+
 import logoImage from "../../../public/logo.png";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export const Footer = () => {
   return (
-    <footer className="relative z-10 border-t border-yellow-500/20 bg-black/80 backdrop-blur-sm mt-20">
+    <motion.footer
+      initial={{ y: 200 }}
+      transition={{ duration: 0.5 }}
+      className="relative z-10 border-t border-yellow-500/20 bg-black/80 backdrop-blur-sm mt-20"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center">
@@ -18,6 +25,6 @@ export const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
