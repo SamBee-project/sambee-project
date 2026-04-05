@@ -12,16 +12,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/Card";
-import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
-import { Label } from "../../components/ui/Label";
+} from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Label } from "../../../components/ui/Label";
 import { toast } from "sonner";
 import {
   passwordRecoverySchema,
   PasswordRecoveryFormData,
-} from "../../schemas/authSchema";
-import { TopoBackground } from "../../components/TopoBackground";
+} from "../../../schemas/authSchema";
+import { TopoBackground } from "../../../components/TopoBackground";
 import logoImage from "../../../public/logo.png";
 import Image from "next/image";
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { loginSchema, registrationSchema } from "../../schemas/authSchema";
+import { loginSchema, registrationSchema } from "../../../schemas/authSchema";
 
 describe("Auth validations", () => {
   it("should skip with valid data", () => {

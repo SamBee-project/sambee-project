@@ -1,57 +1,63 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
-
+import { Eye, EyeOff, Mail, Lock, Loader2, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
+} from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Label } from "../../../components/ui/Label";
+import { Checkbox } from "../../../components/ui/Checkbox";
 import { toast } from "sonner";
-import { loginSchema, LoginFormData } from "@/schemas/authSchema";
-import { TopoBackground } from "@/components/TopoBackground";
-import logoImage from "../../../public/logo.png";
+import {
+  registrationSchema,
+  RegistrationFormData,
+} from "../../../schemas/authSchema";
+import { TopoBackground } from "../../../components/TopoBackground";
+import logoImage from "../../../../public/logo.png";
+import Image from "next/image";
 
-export default function LoginPage() {
+export default function Register() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
+      acceptTerms: false,
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegistrationFormData) => {
     setIsLoading(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      console.log("Login data:", data);
-      toast.success("Login successful! Welcome back.");
-
-      router.push("/");
+      console.log("Registration data:", data);
+      toast.success("Account created successfully! Welcome to SAMBEE.");
+      router.push("/dashboard");
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+      toast.error("Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -76,9 +82,6 @@ export default function LoginPage() {
           <Image
             src={logoImage}
             alt="SAMBEE Logo"
-            width={200}
-            height={64}
-            priority
             className="h-26 w-auto object-contain"
           />
           <p className="text-gray-400 text-sm mt-1">Smart Beehive Management</p>
@@ -87,14 +90,45 @@ export default function LoginPage() {
         <Card className="bg-black/50 backdrop-blur-lg border-yellow-500/20 shadow-2xl shadow-yellow-500/5">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl text-white text-center">
-              Welcome Back
+              Create Account
             </CardTitle>
             <CardDescription className="text-gray-400 text-center">
-              Sign in to your account to continue
+              Join SAMBEE and start managing your hives
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-gray-300">
+                  Full Name
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        {...field}
+                        className="pl-10 bg-black/50 border-yellow-500/30 text-white placeholder:text-gray-500 focus:border-yellow-500/50"
+                      />
+                    )}
+                  />
+                </div>
+                {errors.name && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs mt-1"
+                  >
+                    {errors.name.message}
+                  </motion.p>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-gray-300">
                   Email Address
@@ -168,27 +202,99 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <div className="flex justify-end">
-                <Link
-                  href="/password-recovery"
-                  className="text-sm text-yellow-500 hover:text-yellow-400 transition-colors"
-                >
-                  Forgot password?
-                </Link>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-gray-300">
+                  Confirm Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Controller
+                    name="confirmPassword"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        {...field}
+                        className="pl-10 pr-10 bg-black/50 border-yellow-500/30 text-white placeholder:text-gray-500 focus:border-yellow-500/50"
+                      />
+                    )}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs mt-1"
+                  >
+                    {errors.confirmPassword.message}
+                  </motion.p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Controller
+                  name="acceptTerms"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="acceptTerms"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="border-yellow-500/30 data-[state=checked]:bg-yellow-500 data-[state=checked]:border-yellow-500 mt-0.5"
+                      />
+                      <label
+                        htmlFor="acceptTerms"
+                        className="text-sm text-gray-400 leading-tight cursor-pointer"
+                      >
+                        I agree to the{" "}
+                        <span className="text-yellow-500 hover:text-yellow-400">
+                          Terms of Service
+                        </span>{" "}
+                        and{" "}
+                        <span className="text-yellow-500 hover:text-yellow-400">
+                          Privacy Policy
+                        </span>
+                      </label>
+                    </div>
+                  )}
+                />
+                {errors.acceptTerms && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-xs"
+                  >
+                    {errors.acceptTerms.message}
+                  </motion.p>
+                )}
               </div>
 
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium h-11"
+                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium h-11 mt-6"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Signing in...
+                    Creating account...
                   </>
                 ) : (
-                  "Sign In"
+                  "Create Account"
                 )}
               </Button>
 
@@ -198,18 +304,18 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-black text-gray-400">
-                    New to SAMBEE?
+                    Already have an account?
                   </span>
                 </div>
               </div>
 
-              <Link href="/register" className="block w-full">
+              <Link href="/login">
                 <Button
                   type="button"
                   variant="outline"
                   className="w-full border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/10 hover:text-yellow-400 h-11"
                 >
-                  Create an Account
+                  Sign In
                 </Button>
               </Link>
             </form>
