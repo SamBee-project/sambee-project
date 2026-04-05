@@ -21,8 +21,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/Card";
-import { Badge } from "./ui/badge";
-import { Alert, AlertDescription } from "./ui/alert";
+import { Badge } from "../../components/ui/Badge";
+import { Alert, AlertDescription } from "../../components/ui/Alert";
 import { Button } from "../../components/ui/Button";
 import { toast } from "sonner";
 import {
