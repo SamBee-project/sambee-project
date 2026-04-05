@@ -20,10 +20,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from "../../components/ui/Card";
 import { Badge } from "./ui/badge";
 import { Alert, AlertDescription } from "./ui/alert";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../components/ui/Button";
 import { toast } from "sonner";
 import {
   useGetHivesQuery,
