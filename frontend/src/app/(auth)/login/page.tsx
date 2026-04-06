@@ -47,6 +47,7 @@ export default function LoginPage() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log("Login data:", data);
+      localStorage.setItem("isAuthenticated", "true");
       toast.success("Login successful! Welcome back.");
 
       router.push("/");

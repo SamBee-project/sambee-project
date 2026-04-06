@@ -54,6 +54,7 @@ export default function Register() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log("Registration data:", data);
+      localStorage.setItem("isAuthenticated", "true");
       toast.success("Account created successfully! Welcome to SAMBEE.");
       router.push("/dashboard");
     } catch (error) {

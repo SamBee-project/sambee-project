@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -20,6 +22,14 @@ import { TopoBackground } from "../../components/TopoBackground";
 import { Footer } from "@/components/ui/Footer";
 
 export default function Welcome() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem("isAuthenticated") === "true") {
+      router.push("/dashboard");
+    }
+  }, [router]);
+
   const features = [
     {
       icon: Activity,
