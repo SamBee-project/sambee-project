@@ -22,7 +22,7 @@ import {
   PasswordRecoveryFormData,
 } from "../../../schemas/authSchema";
 import { TopoBackground } from "../../../components/TopoBackground";
-import logoImage from "../../../public/logo.png";
+import logoImage from "../../../../public/logo.png";
 import Image from "next/image";
 
 export default function PasswordRecovery() {
