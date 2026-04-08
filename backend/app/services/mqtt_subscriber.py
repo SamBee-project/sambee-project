@@ -43,6 +43,13 @@ async def _handle_message(message: aiomqtt.Message) -> None:
             f"[MQTT] Невалідний payload: {message.payload!r} — {e}")
         return
 
+    weight = None
+    if "weight" in data:
+        try:
+            weight = float(data["weight"])
+        except ValueError:
+            logger.warning(f"[MQTT] Не вдалося розпарсити weight: {data['weight']!r}")
+
     async with AsyncSessionLocal() as session:
         await session.execute(
             insert(SensorReading).values(
@@ -50,9 +57,11 @@ async def _handle_message(message: aiomqtt.Message) -> None:
                 temperature=temperature,
                 humidity=humidity,
                 pressure=pressure,
+                weight=weight,
             )
         )
         await session.commit()
 
+    weight_str = f"{weight:.3f} kg" if weight is not None else "N/A"
     logger.info(
-        f"[MQTT] Збережено: {hive_id} | T={temperature} RH={humidity} P={pressure}")
+        f"[MQTT] Збережено: {hive_id} | T={temperature} RH={humidity} P={pressure} W={weight_str}")
