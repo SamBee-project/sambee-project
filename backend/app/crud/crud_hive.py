@@ -35,4 +35,4 @@ async def update_hive(db: AsyncSession, hive_id: int, obj_in: HiveCreate):
     return hive
 
 async def delete_hive(db: AsyncSession, hive_id: id, obj_in: HiveDelete):
-    remove_hive = 
+    
