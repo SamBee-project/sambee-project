@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "sensors/temperature.h"
+#include "sensors/weight.h"
 #include "comm/mqtt_client.h"
 
 #define PUBLISH_INTERVAL_MS 5000
@@ -13,8 +14,12 @@ void setup() {
     Serial.println("\n=== Smart Hive — boot ===");
 
     if (!initEnvironmentSensor()) {
-        Serial.println("[MAIN] FATAL: sensor init failed");
+        Serial.println("[MAIN] FATAL: env sensor init failed");
         while (true) { delay(1000); }
+    }
+
+    if (!initWeightSensor()) {
+        Serial.println("[MAIN] WARN: weight sensor init failed — weight will not be sent");
     }
 
     if (!initComm()) {
@@ -33,6 +38,7 @@ void loop() {
 
         EnvironmentData data = readEnvironment();
         if (data.valid) {
+            data.weight = readWeight();
             publishSensorData(data);
         } else {
             Serial.println("[MAIN] Reading skipped — sensor error");

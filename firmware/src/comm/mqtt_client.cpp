@@ -59,13 +59,16 @@ bool publishSensorData(const EnvironmentData& data) {
         return false;
     }
 
-    StaticJsonDocument<128> doc;
+    StaticJsonDocument<192> doc;
     doc["hive_id"]     = HIVE_ID;
     doc["temperature"] = serialized(String(data.temperature, 2));
     doc["humidity"]    = serialized(String(data.humidity, 2));
     doc["pressure"]    = serialized(String(data.pressure, 1));
+    if (data.weight >= 0.0f) {
+        doc["weight"] = serialized(String(data.weight, 3));
+    }
 
-    char payload[128];
+    char payload[192];
     serializeJson(doc, payload, sizeof(payload));
 
     char topic[64];
