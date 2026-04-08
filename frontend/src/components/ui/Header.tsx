@@ -16,7 +16,6 @@ import {
   LogOut,
 } from "lucide-react";
 
-// Припускаємо, що TopoBackground десь імпортується або визначений
 const TopoBackground = () => (
   <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" />
 );
@@ -25,10 +24,8 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Стан авторизації
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Перевірка авторизації
   useEffect(() => {
     const checkAuth = () => {
       const authStatus = localStorage.getItem("isAuthenticated") === "true";
@@ -64,7 +61,6 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
     <div className="fixed z-20 w-full">
       <TopoBackground />
 
-      {/* Header */}
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -84,7 +80,6 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
               />
             </Link>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4">
               {!isHomePage && (
                 <nav className="flex items-center gap-1">
@@ -108,7 +103,6 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
                 </nav>
               )}
 
-              {/* Auth Buttons */}
               <div className="flex items-center gap-2 ml-2 pl-2 border-l border-yellow-500/20">
                 {!isAuthenticated ? (
                   <>
@@ -146,7 +140,6 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
               </div>
             </div>
 
-            {/* Mobile Auth Icons */}
             <div className="md:hidden flex items-center gap-2">
               {!isAuthenticated ? (
                 <>
@@ -183,7 +176,6 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
         </div>
       </motion.header>
 
-      {/* Mobile Navigation Bar */}
       {!isHomePage && (
         <nav className="md:hidden bg-black/80 backdrop-blur-sm border-b border-yellow-500/20 sticky top-16 z-40">
           <div className="flex px-2 py-2">
