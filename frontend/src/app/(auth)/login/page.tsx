@@ -9,6 +9,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 
+import { useLoginMutation } from "@/store/api/apiSlice";
+
 import {
   Card,
   CardContent,
@@ -26,8 +28,9 @@ import logoImage from "../../../../public/logo.png";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     control,
@@ -42,26 +45,35 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const response = await login(data).unwrap();
 
-      console.log("Login data:", data);
+      localStorage.setItem("token", response.access_token);
       localStorage.setItem("isAuthenticated", "true");
-      toast.success("Login successful! Welcome back.");
 
+      toast.success("Login successful! Welcome back.");
       router.push("/");
-    } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
-    } finally {
-      setIsLoading(false);
+    } catch (err: any) {
+      const serverDetail = err?.data?.detail;
+
+      let errorMessage = "Invalid email or password";
+
+      if (serverDetail === "LOGIN_BAD_CREDENTIALS") {
+        errorMessage = "Incorrect email or password. Please try again.";
+      } else if (typeof serverDetail === "string") {
+        errorMessage = serverDetail;
+      }
+
+      toast.error(errorMessage);
+
+      console.error("Login Error Status:", err?.status);
+      console.error("Login Error Data:", err?.data);
     }
   };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
       <TopoBackground />
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -117,13 +129,9 @@ export default function LoginPage() {
                   />
                 </div>
                 {errors.email && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-red-400 text-xs mt-1"
-                  >
+                  <p className="text-red-400 text-xs mt-1">
                     {errors.email.message}
-                  </motion.p>
+                  </p>
                 )}
               </div>
 
@@ -159,13 +167,9 @@ export default function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-red-400 text-xs mt-1"
-                  >
+                  <p className="text-red-400 text-xs mt-1">
                     {errors.password.message}
-                  </motion.p>
+                  </p>
                 )}
               </div>
 
@@ -216,15 +220,6 @@ export default function LoginPage() {
             </form>
           </CardContent>
         </Card>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-center text-xs text-gray-500 mt-6"
-        >
-          © 2026 SAMBEE. Smart Beehive Management System
-        </motion.p>
       </motion.div>
     </div>
   );

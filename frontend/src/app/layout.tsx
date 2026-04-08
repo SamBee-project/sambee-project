@@ -3,6 +3,7 @@ import { StoreProvider } from "@/store/StoreProvider";
 import { Orbitron } from "next/font/google";
 import localFont from "next/font/local";
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "SamBee",
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${orbitron.variable} ${gruntGrotesk.variable} antialiased bg-black text-white min-h-screen`}
       >
         <StoreProvider>{children}</StoreProvider>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
