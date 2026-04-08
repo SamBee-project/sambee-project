@@ -41,7 +41,7 @@ bool initEnvironmentSensor() {
 }
 
 EnvironmentData readEnvironment() {
-    EnvironmentData result = {0, 0, 0, false};
+    EnvironmentData result = {0, 0, 0, -1.0f, false};
 
     bme.takeForcedMeasurement();
 
