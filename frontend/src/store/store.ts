@@ -1,13 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-// Here are API services
+import { apiSlice } from "./api/apiSlice";
 
 export const store = configureStore({
   reducer: {
-    // There will be slices here.
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
-  // Here we add the middleware for RTK Query
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
 setupListeners(store.dispatch);

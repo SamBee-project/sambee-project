@@ -12,17 +12,17 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+} from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Label } from "../../../components/ui/Label";
 import { toast } from "sonner";
 import {
   passwordRecoverySchema,
   PasswordRecoveryFormData,
-} from "../../schemas/authSchema";
-import { TopoBackground } from "../../components/TopoBackground";
-import logoImage from "../../../public/logo.png";
+} from "../../../schemas/authSchema";
+import { TopoBackground } from "../../../components/TopoBackground";
+import logoImage from "../../../../public/logo.png";
 import Image from "next/image";
 
 export default function PasswordRecovery() {

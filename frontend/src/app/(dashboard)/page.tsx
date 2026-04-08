@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -14,13 +16,20 @@ import {
   Zap,
   ArrowRight,
 } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
-import { TopoBackground } from "../components/TopoBackground";
-import logoImage from "../../public/logo.png";
-import Image from "next/image";
+import { Button } from "../../components/ui/Button";
+import { Card, CardContent } from "../../components/ui/Card";
+import { TopoBackground } from "../../components/TopoBackground";
+import { Footer } from "@/components/ui/Footer";
 
 export default function Welcome() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem("isAuthenticated") === "true") {
+      router.push("/dashboard");
+    }
+  }, [router]);
+
   const features = [
     {
       icon: Activity,
@@ -87,46 +96,8 @@ export default function Welcome() {
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <TopoBackground />
 
-      <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-black/80 backdrop-blur-sm border-b border-yellow-500/20 sticky top-0 z-50"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Image
-                src={logoImage}
-                alt="SAMBEE Logo"
-                className="h-20 w-auto object-contain"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Link href="/login">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-300 hover:text-yellow-500 hover:bg-yellow-500/10"
-                >
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button
-                  size="sm"
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black"
-                >
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </motion.header>
-
       <main className="relative z-10">
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -376,23 +347,6 @@ export default function Welcome() {
           </motion.div>
         </section>
       </main>
-
-      <footer className="relative z-10 border-t border-yellow-500/20 bg-black/80 backdrop-blur-sm mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center">
-              <Image
-                src={logoImage}
-                alt="SAMBEE Logo"
-                className="h-20 w-auto object-contain"
-              />
-            </div>
-            <p className="text-sm text-gray-400">
-              © 2026 SAMBEE. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
