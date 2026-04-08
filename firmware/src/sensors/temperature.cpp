@@ -4,9 +4,9 @@
 #include <Adafruit_BME280.h>
 #include <Wire.h>
 
-// I²C піни для ESP32-S3-DevKitC-1
-#define I2C_SDA 8
-#define I2C_SCL 9
+// I²C піни для ESP32-WROOM
+#define I2C_SDA 21
+#define I2C_SCL 22
 
 // BME280 може мати адресу 0x76 або 0x77
 // На більшості китайських модулів — 0x76
@@ -29,7 +29,7 @@ bool initEnvironmentSensor() {
 
     if (!status) {
         Serial.println("[ENV] ERROR: BME280 не знайдено");
-        Serial.println("[ENV] Перевір: SDA->GPIO8, SCL->GPIO9, VCC->3.3V");
+        Serial.println("[ENV] Перевір: SDA->GPIO21, SCL->GPIO22, VCC->3.3V");
         return false;
     }
 
