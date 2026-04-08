@@ -1,0 +1,27 @@
+# docker-compose.override.yml — автоматично застосовується поверх docker-compose.yml
+# Додає hot-reload для backend і frontend у режимі розробки.
+# Запуск: docker compose up   (override підхоплюється автоматично)
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      # Монтуємо код — uvicorn --reload відстежує зміни без перезбірки
+      - ./backend:/app
+      # Анонімний volume щоб .venv всередині контейнера не перезаписувалось хостовим
+      - /app/.venv
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development          # використовуємо stage "development" з Dockerfile
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
