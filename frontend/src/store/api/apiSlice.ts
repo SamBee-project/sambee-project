@@ -1,52 +1,56 @@
-import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Hive, Inspection, Alert } from "../../types";
-import {
-  mockHives,
-  mockInspections,
-  mockAlerts,
-  temperatureHistory,
-  honeyProductionHistory,
-} from "../../data/mockData";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-let hives = [...mockHives];
-let inspections = [...mockInspections];
-let alerts = [...mockAlerts];
+interface LoginResponse {
+  access_token: string;
+  token_type: string;
+}
 
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fakeBaseQuery(),
-  tagTypes: ["Hives", "Inspections", "Alerts"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ["Hives", "Inspections", "Alerts", "User"],
   endpoints: (builder) => ({
+    login: builder.mutation<LoginResponse, any>({
+      query: (credentials) => {
+        const bodyFormData = new FormData();
+        bodyFormData.append("username", credentials.email);
+        bodyFormData.append("password", credentials.password);
+
+        return {
+          url: "auth/jwt/login",
+          method: "POST",
+          body: bodyFormData,
+        };
+      },
+    }),
+
     getHives: builder.query<Hive[], void>({
-      queryFn: async () => {
-        await delay(300);
-        return { data: hives };
+      query: () => "/hives",
+      transformResponse: (response: any) => {
+        return Array.isArray(response)
+          ? response
+          : response.hives || response.data || [];
       },
       providesTags: ["Hives"],
     }),
 
     getHive: builder.query<Hive, string>({
-      queryFn: async (id) => {
-        await delay(200);
-        const hive = hives.find((h) => h.id === id);
-        if (!hive) {
-          return { error: { status: 404, data: "Hive not found" } };
-        }
-        return { data: hive };
-      },
+      query: (id) => `/hives/${id}`,
       providesTags: (result, error, id) => [{ type: "Hives", id }],
     }),
 
     getInspections: builder.query<Inspection[], string | void>({
-      queryFn: async (hiveId) => {
-        await delay(200);
-        const filtered = hiveId
-          ? inspections.filter((i) => i.hiveId === hiveId)
-          : inspections;
-        return { data: filtered };
-      },
+      query: (hiveId) =>
+        hiveId ? `/inspections?hiveId=${hiveId}` : "/inspections",
       providesTags: ["Inspections"],
     }),
 
@@ -54,69 +58,39 @@ export const apiSlice = createApi({
       Inspection,
       Omit<Inspection, "id" | "hiveName">
     >({
-      queryFn: async (newInspection) => {
-        await delay(400);
-        const hive = hives.find((h) => h.id === newInspection.hiveId);
-        if (!hive) {
-          return { error: { status: 404, data: "Hive not found" } };
-        }
-
-        const inspection: Inspection = {
-          id: String(Date.now()),
-          hiveName: hive.name,
-          ...newInspection,
-        };
-
-        inspections = [inspection, ...inspections];
-
-        hives = hives.map((h) =>
-          h.id === newInspection.hiveId
-            ? { ...h, lastInspection: newInspection.date }
-            : h,
-        );
-
-        return { data: inspection };
-      },
+      query: (newInspection) => ({
+        url: "/inspections",
+        method: "POST",
+        body: newInspection,
+      }),
       invalidatesTags: ["Inspections", "Hives"],
     }),
 
     getAlerts: builder.query<Alert[], void>({
-      queryFn: async () => {
-        await delay(200);
-        return { data: alerts };
-      },
+      query: () => "/alerts",
       providesTags: ["Alerts"],
     }),
 
-    dismissAlert: builder.mutation<string, string>({
-      queryFn: async (alertId) => {
-        await delay(200);
-        alerts = alerts.filter((a) => a.id !== alertId);
-        return { data: alertId };
-      },
+    dismissAlert: builder.mutation<void, string>({
+      query: (alertId) => ({
+        url: `/alerts/${alertId}`,
+        method: "DELETE",
+      }),
       invalidatesTags: ["Alerts"],
     }),
 
-    getTemperatureHistory: builder.query<typeof temperatureHistory, void>({
-      queryFn: async () => {
-        await delay(300);
-        return { data: temperatureHistory };
-      },
+    getTemperatureHistory: builder.query<any, void>({
+      query: () => "/stats/temperature",
     }),
 
-    getHoneyProductionHistory: builder.query<
-      typeof honeyProductionHistory,
-      void
-    >({
-      queryFn: async () => {
-        await delay(300);
-        return { data: honeyProductionHistory };
-      },
+    getHoneyProductionHistory: builder.query<any, void>({
+      query: () => "/stats/honey",
     }),
   }),
 });
 
 export const {
+  useLoginMutation,
   useGetHivesQuery,
   useGetHiveQuery,
   useGetInspectionsQuery,

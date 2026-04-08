@@ -106,7 +106,7 @@ export default function Analytics() {
             {
               label: "Total Production",
               value: `${totalProduction.toFixed(1)} kg`,
-              trend: "+12% vs last month",
+              trend: "+0% vs last month",
               icon: Activity,
             },
             {
