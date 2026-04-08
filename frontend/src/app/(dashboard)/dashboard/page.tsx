@@ -119,7 +119,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
+    <div className="mt-30 md:mt-15">
       <TopoBackground />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
