@@ -40,28 +40,39 @@ export default function Dashboard() {
   const { data: alerts, isLoading: alertsLoading } = useGetAlertsQuery();
   const [dismissAlert] = useDismissAlertMutation();
 
+  const hivesList = Array.isArray(hives) ? hives : [];
+
   const apiaryStats = {
-    totalHives: hives?.length || 0,
-    avgTemperature: hives
+    totalHives: hivesList.length,
+    avgTemperature: hivesList.length
       ? (
-          hives.reduce((sum, h) => sum + h.temperature, 0) / hives.length
+          hivesList.reduce((sum, h) => sum + (h.temperature || 0), 0) /
+          hivesList.length
         ).toFixed(1)
       : "0.0",
-    avgHumidity: hives
-      ? (hives.reduce((sum, h) => sum + h.humidity, 0) / hives.length).toFixed(
-          1,
-        )
+    avgHumidity: hivesList.length
+      ? (
+          hivesList.reduce((sum, h) => sum + (h.humidity || 0), 0) /
+          hivesList.length
+        ).toFixed(1)
       : "0.0",
-    avgWeight: hives
-      ? (hives.reduce((sum, h) => sum + h.weight, 0) / hives.length).toFixed(1)
+    avgWeight: hivesList.length
+      ? (
+          hivesList.reduce((sum, h) => sum + (h.weight || 0), 0) /
+          hivesList.length
+        ).toFixed(1)
       : "0.0",
-    totalProduction: hives
-      ? hives.reduce((sum, h) => sum + h.honeyProduction, 0).toFixed(1)
+    totalProduction: hivesList.length
+      ? hivesList
+          .reduce((sum, h) => sum + (h.honeyProduction || 0), 0)
+          .toFixed(1)
       : "0.0",
-    healthyHives:
-      hives?.filter((h) => h.health === "excellent" || h.health === "good")
-        .length || 0,
-    activeAlerts: alerts?.filter((a) => a.severity === "high").length || 0,
+    healthyHives: hivesList.filter(
+      (h) => h.health === "excellent" || h.health === "good",
+    ).length,
+    activeAlerts: Array.isArray(alerts)
+      ? alerts.filter((a) => a.severity === "high").length
+      : 0,
   };
 
   const handleDismissAlert = async (alertId: string) => {
@@ -313,7 +324,7 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {hives?.map((hive, index) => (
+            {hivesList.map((hive, index) => (
               <motion.div
                 key={hive.id}
                 initial={{ opacity: 0, y: 20 }}
