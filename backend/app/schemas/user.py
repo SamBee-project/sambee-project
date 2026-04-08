@@ -1,22 +1,29 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
+import uuid
+from pydantic import ConfigDict, EmailStr
+from fastapi_users import schemas
 
 
-class UserBase(BaseModel):
-    email: EmailStr
-    is_active: bool = True
+class UserRead(schemas.BaseUser[uuid.UUID]):
+    """Схема для читання даних користувача (те саме, що UserOut)"""
+    model_config = ConfigDict(from_attributes=True)
 
 
-class UserCreate(BaseModel):
+class UserCreate(schemas.BaseUserCreate):
+    """Схема для реєстрації"""
     email: EmailStr
     password: str
+    is_active: bool | None = True
+    is_superuser: bool | None = False
+    is_verified: bool | None = False
 
 
-class UserUpdate(BaseModel):
-    email: EmailStr | None = None
+class UserUpdate(schemas.BaseUserUpdate):
+    """Схема для оновлення профілю"""
     password: str | None = None
+    email: EmailStr | None = None
     is_active: bool | None = None
+    is_superuser: bool | None = None
+    is_verified: bool | None = None
 
 
-class UserOut(UserBase):
-    id: int
-    model_config = ConfigDict(from_attributes=True)
+UserOut = UserRead
