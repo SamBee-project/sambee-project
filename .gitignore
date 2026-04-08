@@ -21,8 +21,10 @@ frontend/.vercel
 .venv/
 venv/
 
+
 # Ігноруємо кеш пітона
 **/__pycache__/
+
 
 # Ігноруємо секрети
 .env
