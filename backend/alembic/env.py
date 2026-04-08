@@ -1,10 +1,3 @@
-"""
-Alembic env: синхронний URL для міграцій (psycopg2), моделі з app.db.base.Base.
-Перед upgrade: pip install psycopg2-binary alembic
-
-Важливо: імпорт `app` працює лише якщо у sys.path є каталог backend/.
-Цей файл може лежати як у backend/alembic/env.py, так і в корені репо alembic/env.py.
-"""
 from __future__ import annotations
 
 import os
@@ -16,69 +9,83 @@ from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, pool
 
-# --- Шлях до пакета app (каталог backend/) ---
-# Варіант A: .../backend/alembic/env.py  → backend = parents[1]
-# Варіант B: .../sambee-project/alembic/env.py → backend = repo/backend
+# --- 1. Налаштування шляхів до проекту ---
 _here = Path(__file__).resolve()
 _alembic_dir = _here.parent
 _repo_or_backend = _alembic_dir.parent
 
+# Визначаємо корінь бекенду, щоб Python бачив папку `app`
 if (_repo_or_backend / "app").is_dir():
     BACKEND_ROOT = _repo_or_backend
 elif (_repo_or_backend / "backend" / "app").is_dir():
     BACKEND_ROOT = _repo_or_backend / "backend"
 else:
     raise RuntimeError(
-        "Alembic: не знайдено пакет `app`. Очікується backend/app поруч з alembic "
-        "(або sambee-project/backend/app, якщо env.py у корені репо)."
+        "Alembic: не знайдено пакет `app`. Перевірте структуру папок!"
     )
 
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-# alembic.ini -> [loggers]
+# --- 2. Завантаження налаштувань ---
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 load_dotenv(BACKEND_ROOT / ".env")
 
-# Імпорт метаданих і реєстрація моделей
-from app.db.base import Base  # noqa: E402
-from app import models  # noqa: F401, E402
+# --- 3. Імпорт моделей (КРИТИЧНО ДЛЯ AUTOGENERATE) ---
+# Імпортуємо ТУ САМУ Base, від якої наслідуються моделі
+from app.db.base_class import Base 
+
+# Явно імпортуємо класи, щоб SQLAlchemy "побачила" їх в MetaData
+from app.models.user import User
+from app.models.hive import Hive
+# Якщо є SensorReading — додай його сюди теж
 
 target_metadata = Base.metadata
 
+# --- 4. Функції для роботи з БД ---
 
 def get_sync_database_url() -> str:
-    """postgresql+asyncpg → postgresql+psycopg2 для Alembic."""
+    """Конвертуємо асинхронний URL в синхронний для Alembic (psycopg2)."""
     url = os.getenv("DATABASE_URL", "")
     if not url:
-        raise RuntimeError("DATABASE_URL is not set (backend/.env)")
+        raise RuntimeError("DATABASE_URL is not set in .env")
     if "+asyncpg" in url:
         return url.replace("postgresql+asyncpg", "postgresql+psycopg2", 1)
     return url
 
-
 def run_migrations_offline() -> None:
+    """Запуск міграцій в офлайн режимі (генерує SQL скрипт)."""
+    url = get_sync_database_url()
     context.configure(
-        url=get_sync_database_url(),
+        url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
+
     with context.begin_transaction():
         context.run_migrations()
 
-
 def run_migrations_online() -> None:
-    connectable = create_engine(get_sync_database_url(), poolclass=pool.NullPool)
+    """Запуск міграцій в онлайн режимі (прямий конект до БД)."""
+    connectable = create_engine(
+        get_sync_database_url(), 
+        poolclass=pool.NullPool
+    )
+
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, 
+            target_metadata=target_metadata
+        )
+
         with context.begin_transaction():
             context.run_migrations()
 
-
+# --- 5. Вибір режиму запуску ---
 if context.is_offline_mode():
     run_migrations_offline()
 else:
