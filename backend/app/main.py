@@ -1,34 +1,19 @@
-import asyncio
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
+from app.api.v1.api import api_router 
+from app.core.users import fastapi_users, auth_backend 
+from app.schemas.user import UserOut, UserCreate 
 
-from app.api.v1.endpoints.auth import router as auth_router
-from app.api.v1.endpoints.hives import router as hives_router
-from app.db.base import Base
-from app.db.session import engine
-from app import models  # noqa: F401 — реєструє всі моделі
-from app.services.mqtt_subscriber import mqtt_subscriber
+app = FastAPI(title="SamBee API")
 
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend),
+    prefix="/api/v1/auth/jwt",
+    tags=["auth"],
+)
+app.include_router(
+    fastapi_users.get_register_router(UserOut, UserCreate),
+    prefix="/api/v1/auth",
+    tags=["auth"],
+)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # --- startup ---
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-    mqtt_task = asyncio.create_task(mqtt_subscriber())
-
-    yield
-
-    # --- shutdown ---
-    mqtt_task.cancel()
-    try:
-        await mqtt_task
-    except asyncio.CancelledError:
-        pass
-
-
-app = FastAPI(title="Smart Bee API", version="1.0.0", lifespan=lifespan)
-app.include_router(auth_router, prefix="/api/v1", tags=["auth"])
-app.include_router(hives_router, prefix="/api/v1", tags=["hives"])
+app.include_router(api_router, prefix="/api/v1")

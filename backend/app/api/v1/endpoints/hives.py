@@ -3,6 +3,6 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.get("/hives")
-async def get_hives():
-    return {"items": []}
+@router.get("/")
+async def list_hives():
+    return {"message": "Список вуликів порожній, але API працює!"}
