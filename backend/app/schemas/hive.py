@@ -22,4 +22,4 @@ class HiveUpdate(BaseModel):
 class HiveOut(HiveBase):
     id: int
     user_id: int
-    created_at: datetime
+    created_at: DateTime
