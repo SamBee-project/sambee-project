@@ -19,7 +19,6 @@ import {
 import { Button } from "../../components/ui/Button";
 import { Card, CardContent } from "../../components/ui/Card";
 import { TopoBackground } from "../../components/TopoBackground";
-import { Footer } from "@/components/ui/Footer";
 
 export default function Welcome() {
   const router = useRouter();
@@ -93,7 +92,7 @@ export default function Welcome() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden mt-30 md:mt-15">
       <TopoBackground />
 
       <main className="relative z-10">
