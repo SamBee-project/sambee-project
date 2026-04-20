@@ -26,12 +26,13 @@ import {
 import { TopoBackground } from "../../../components/TopoBackground";
 import logoImage from "../../../../public/logo.png";
 import Image from "next/image";
+import { useRegisterMutation } from "@/store/api/apiSlice";
 
 export default function Register() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registerUser, { isLoading }] = useRegisterMutation();
 
   const {
     control,
@@ -49,18 +50,25 @@ export default function Register() {
   });
 
   const onSubmit = async (data: RegistrationFormData) => {
-    setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await registerUser({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      }).unwrap();
 
-      console.log("Registration data:", data);
-      localStorage.setItem("isAuthenticated", "true");
-      toast.success("Account created successfully! Welcome to SAMBEE.");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error("Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      toast.success("Account created successfully! Please sign in.");
+      router.push("/login");
+    } catch (err: any) {
+      const detail = err?.data?.detail;
+      const errorMessage =
+        typeof detail === "string"
+          ? detail
+          : Array.isArray(detail)
+            ? detail[0]?.msg
+            : "Registration failed. Please try again.";
+
+      toast.error(errorMessage);
     }
   };
 
