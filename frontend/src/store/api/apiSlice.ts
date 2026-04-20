@@ -33,6 +33,14 @@ export const apiSlice = createApi({
       },
     }),
 
+    register: builder.mutation({
+      query: (newUser) => ({
+        url: "auth/register",
+        method: "POST",
+        body: newUser,
+      }),
+    }),
+
     getHives: builder.query<Hive[], void>({
       query: () => "/hives",
       transformResponse: (response: any) => {
@@ -99,4 +107,5 @@ export const {
   useDismissAlertMutation,
   useGetTemperatureHistoryQuery,
   useGetHoneyProductionHistoryQuery,
+  useRegisterMutation,
 } = apiSlice;
