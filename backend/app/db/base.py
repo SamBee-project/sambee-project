@@ -1,4 +1,5 @@
-from sqlalchemy.orm import DeclarativeBase
+from app.db.base_class import Base
 
-class Base(DeclarativeBase):
-    pass
+from app.models.user import User
+from app.models.hive import Hive
+from app.models.sensor_reading import SensorReading
