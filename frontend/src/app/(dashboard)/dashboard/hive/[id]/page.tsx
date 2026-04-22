@@ -42,21 +42,18 @@ export default function HiveDetails() {
     ? params.id[0]
     : (params.id as string);
 
-  // Зверни увагу: перейменували на rawHive, щоб спочатку його перевірити
   const {
-    data: rawHive,
+    data: hive,
     isLoading: hiveLoading,
     isError: isHiveError,
   } = useGetHiveQuery(hiveId, {
     skip: !hiveId,
   });
-
   const {
     data: inspections,
     isLoading: inspectionsLoading,
     isError: isInspectionsError,
   } = useGetInspectionsQuery(hiveId, { skip: !hiveId });
-
   const { data: temperatureHistory } = useGetTemperatureHistoryQuery();
 
   if (hiveLoading || inspectionsLoading) {
@@ -66,13 +63,6 @@ export default function HiveDetails() {
       </div>
     );
   }
-
-  // 🔥 ОСЬ ГОЛОВНИЙ ФІКС: Розпаковуємо дані, якщо бекенд віддає масив або {data: ...} 🔥
-  const hive = rawHive
-    ? Array.isArray(rawHive)
-      ? rawHive[0]
-      : rawHive.data || rawHive
-    : null;
 
   if (isHiveError || !hive) {
     return (
@@ -477,7 +467,7 @@ export default function HiveDetails() {
                     </CardContent>
                   </Card>
                 ) : inspections && inspections.length > 0 ? (
-                  inspections.map((inspection: any, index: number) => (
+                  inspections.map((inspection, index) => (
                     <motion.div
                       key={inspection.id || index}
                       initial={{ opacity: 0, y: 20 }}

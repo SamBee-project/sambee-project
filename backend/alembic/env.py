@@ -41,8 +41,8 @@ from app.db.base_class import Base
 # Явно імпортуємо класи, щоб SQLAlchemy "побачила" їх в MetaData
 from app.models.user import User
 from app.models.hive import Hive
-# Якщо є SensorReading — додай його сюди теж
 
+from app.models.sensor_reading import SensorReading
 target_metadata = Base.metadata
 
 # --- 4. Функції для роботи з БД ---
