@@ -1,6 +1,5 @@
 from sqlalchemy import Column, DateTime, Float, Integer, String, func
 from app.db.base_class import Base
-from sqlalchemy.orm import relationship
 
 
 class SensorReading(Base):
@@ -13,5 +12,3 @@ class SensorReading(Base):
     weight = Column(Float, nullable=True)
     recorded_at = Column(DateTime(timezone=True),
                          server_default=func.now(), nullable=False)
-
-    hives = relationship("Hive", back_populates="owner")
