@@ -36,8 +36,16 @@ import {
 import { Hive } from "../../../types";
 
 export default function Dashboard() {
-  const { data: hives, isLoading: hivesLoading } = useGetHivesQuery();
-  const { data: alerts, isLoading: alertsLoading } = useGetAlertsQuery();
+  const {
+    data: hives,
+    isLoading: hivesLoading,
+    isError: isHivesError,
+  } = useGetHivesQuery();
+  const {
+    data: alerts,
+    isLoading: alertsLoading,
+    isError: isAlertsError,
+  } = useGetAlertsQuery();
   const [dismissAlert] = useDismissAlertMutation();
 
   const hivesList = Array.isArray(hives) ? hives : [];
@@ -125,6 +133,18 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+      </div>
+    );
+  }
+
+  if (isHivesError || isAlertsError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 gap-3">
+        <AlertTriangle className="w-10 h-10 text-red-500/80" />
+        <p className="text-red-400 font-medium text-lg">Error loading data.</p>
+        <p className="text-gray-500 text-sm">
+          Please check your connection or try again later.
+        </p>
       </div>
     );
   }
