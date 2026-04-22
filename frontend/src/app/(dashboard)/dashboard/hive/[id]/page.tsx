@@ -42,11 +42,18 @@ export default function HiveDetails() {
     ? params.id[0]
     : (params.id as string);
 
-  const { data: hive, isLoading: hiveLoading } = useGetHiveQuery(hiveId, {
+  const {
+    data: hive,
+    isLoading: hiveLoading,
+    isError: isHiveError,
+  } = useGetHiveQuery(hiveId, {
     skip: !hiveId,
   });
-  const { data: inspections, isLoading: inspectionsLoading } =
-    useGetInspectionsQuery(hiveId, { skip: !hiveId });
+  const {
+    data: inspections,
+    isLoading: inspectionsLoading,
+    isError: isInspectionsError,
+  } = useGetInspectionsQuery(hiveId, { skip: !hiveId });
   const { data: temperatureHistory } = useGetTemperatureHistoryQuery();
 
   if (hiveLoading || inspectionsLoading) {
@@ -57,11 +64,13 @@ export default function HiveDetails() {
     );
   }
 
-  if (!hive) {
+  if (isHiveError || !hive) {
     return (
       <div className="text-center py-12 mt-25 md:mt-10">
         <TopoBackground />
-        <h2 className="text-xl text-white">Hive not found</h2>
+        <h2 className="text-xl text-white">
+          {isHiveError ? "Error loading hive data" : "Hive not found"}
+        </h2>
         <Link href="/dashboard">
           <Button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-black">
             Back to Dashboard
@@ -425,7 +434,15 @@ export default function HiveDetails() {
               </TabsContent>
 
               <TabsContent value="inspections" className="space-y-4">
-                {inspections && inspections.length > 0 ? (
+                {isInspectionsError ? (
+                  <Card className="bg-black/50 backdrop-blur-sm border-red-500/20">
+                    <CardContent className="py-12 text-center">
+                      <p className="text-red-400">
+                        Failed to load inspections.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : inspections && inspections.length > 0 ? (
                   inspections.map((inspection, index) => (
                     <motion.div
                       key={inspection.id}

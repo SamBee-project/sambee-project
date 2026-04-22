@@ -1,9 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
-from app.db.base import Base
-
+from app.db.base_class import Base
 from sqlalchemy.dialects.postgresql import UUID
-import uuid
 
 
 class Hive(Base):
@@ -16,3 +14,5 @@ class Hive(Base):
     created_at = Column(DateTime, default=func.now())
     user_id = Column(UUID(as_uuid=True), ForeignKey(
         'users.id'), nullable=False)
+
+    owner = relationship("User", back_populates="hives")

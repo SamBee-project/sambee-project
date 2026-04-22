@@ -15,7 +15,7 @@ def setup_camera(cam_url):
     return cv2.VideoCapture(cam_url)
 
 def get_video_slice(cap, prev_time, interval):
-    """Slicing fuction: captures a frame and checks if enough time has passes."""
+    """Slicing function: captures a frame and checks if enough time has passes."""
     ret, frame = cap.read()
     if not ret:
         return False, None, prev_time
