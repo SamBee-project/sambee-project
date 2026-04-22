@@ -42,7 +42,7 @@ export const apiSlice = createApi({
     }),
 
     getHives: builder.query<Hive[], void>({
-      query: () => "/api/v1/hives",
+      query: () => "/hives",
       transformResponse: (response: any) => {
         return Array.isArray(response)
           ? response

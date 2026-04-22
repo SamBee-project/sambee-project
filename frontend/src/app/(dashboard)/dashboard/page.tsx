@@ -137,7 +137,7 @@ export default function Dashboard() {
     );
   }
 
-  if (isHivesError || isAlertsError) {
+  if (isHivesError) {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-3">
         <AlertTriangle className="w-10 h-10 text-red-500/80" />
