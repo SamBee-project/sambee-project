@@ -1,3 +1,5 @@
+import secrets
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -5,7 +7,7 @@ from sqlalchemy import select
 from app.db.session import get_async_session
 from app.models.hive import Hive
 from app.models.sensor_reading import SensorReading
-from app.schemas.hive import HiveResponse
+from app.schemas.hive import HiveCreate, HiveResponse
 from app.core.users import current_active_user
 
 router = APIRouter()
@@ -37,3 +39,26 @@ async def get_my_hives(
             )
         )
     return out
+
+
+@router.post("/", response_model=HiveResponse, status_code=201)
+async def create_hive(
+    body: HiveCreate,
+    db: AsyncSession = Depends(get_async_session),
+    user=Depends(current_active_user),
+):
+    hive = Hive(
+        name=body.name,
+        location=body.location,
+        api_key=secrets.token_hex(16),
+        user_id=user.id,
+    )
+    db.add(hive)
+    await db.commit()
+    await db.refresh(hive)
+    return HiveResponse(
+        **{c.key: getattr(hive, c.key) for c in hive.__table__.columns},
+        temperature=None,
+        humidity=None,
+        weight=None,
+    )
