@@ -1,29 +1,35 @@
 FROM python:3.12-slim
 
-# Prevent Python from writing .pyc files and buffering stdout/stderr
+# 1. Налаштування середовища
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
 
-# Install system deps needed for some Python packages (psycopg2, cryptography)
+# 2. Встановлення системних залежностей (gcc потрібен для bcrypt/psycopg2)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        gcc \
-        libpq-dev \
+    gcc \
+    libpq-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python deps first (better layer caching)
+# 3. КЕШУВАННЯ ЗАЛЕЖНОСТЕЙ (найважливіший етап)
+# Спочатку копіюємо ТІЛЬКИ requirements.txt
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Встановлюємо бібліотеки. Використовуємо --break-system-packages, 
+# щоб не бавитися з venv всередині ізольованого контейнера.
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --break-system-packages -r requirements.txt
+
+# 4. КОПІЮВАННЯ КОДУ (це робиться в кінці)
 COPY . .
 
-# alembic.ini is git-ignored; use the committed template instead.
-# The actual DB URL is injected via DATABASE_URL env var at runtime.
-RUN cp alembic.ini.bak alembic.ini
+# 5. Налаштування Alembic та прав на запуск
+# Якщо alembic.ini.bak існує, копіюємо його
+RUN if [ -f alembic.ini.bak ]; then cp alembic.ini.bak alembic.ini; fi
 
-# Copy and set entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
