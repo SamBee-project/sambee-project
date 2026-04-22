@@ -34,7 +34,7 @@ async def mqtt_subscriber() -> None:
 async def _handle_message(message: aiomqtt.Message) -> None:
     try:
         data = json.loads(message.payload)
-        hive_id = str(data["hive_id"])
+        hive_id = int(data["hive_id"])
         temperature = float(data["temperature"])
         humidity = float(data["humidity"])
         pressure = float(data["pressure"])

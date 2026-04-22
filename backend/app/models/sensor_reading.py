@@ -5,7 +5,7 @@ from app.db.base_class import Base
 class SensorReading(Base):
     __tablename__ = "sensor_readings"
     id = Column(Integer, primary_key=True)
-    hive_id = Column(String, nullable=False, index=True)
+    hive_id = Column(Integer, nullable=False, index=True)
     temperature = Column(Float, nullable=False)
     humidity = Column(Float, nullable=False)
     pressure = Column(Float, nullable=False)
