@@ -42,17 +42,37 @@ export const apiSlice = createApi({
     }),
 
     getHives: builder.query<Hive[], void>({
-      query: () => "/hives",
-      transformResponse: (response: any) => {
-        return Array.isArray(response)
+      query: () => "hives",
+      transformResponse: (response: any): Hive[] => {
+        const data = Array.isArray(response)
           ? response
           : response.hives || response.data || [];
+
+        return data.map((hive: any) => ({
+          ...hive,
+          lastInspection: hive.created_at,
+          honeyProduction: hive.weight,
+          health: hive.health || "good",
+          queenStatus: hive.queenStatus || "healthy",
+        }));
       },
       providesTags: ["Hives"],
     }),
 
     getHive: builder.query<Hive, string>({
-      query: (id) => `/hives/${id}`,
+      query: (id) => `sensors/${id}`,
+      transformResponse: (response: any): Hive => {
+        const latestData = Array.isArray(response) ? response[0] : response;
+
+        return {
+          ...latestData,
+          lastInspection: latestData.recorded_at || latestData.created_at,
+          honeyProduction: latestData.weight || 0,
+          health: latestData.health || "good",
+          queenStatus: latestData.queenStatus || "healthy",
+          name: latestData.name || `Hive #${latestData.hive_id}`,
+        };
+      },
       providesTags: (result, error, id) => [{ type: "Hives", id }],
     }),
 
