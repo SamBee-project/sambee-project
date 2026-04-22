@@ -42,3 +42,27 @@ def analyze_frame(model, frame):
     
     return counts, results[0].plot()
 
+def save_to_json(filename, stats):
+    "calculate infestation rate and save stats to JSON"
+    infestation_rate = 0
+    if stats["total_bees"] > 0:
+        infestation_rate = round((stats["total_varroa"] / stats["total_bees"]) * 100, 2)
+
+    new_entry = {
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "total_bees": stats["total_bees"],
+            "total_varroa": stats["total_varroa"],
+            "infestation_rate_percent": infestation_rate
+        }
+
+    data = []
+    if os.path.exists(filename):
+        with open(filename, "r", encoding="utf-8") as file:
+            try:
+                data = json.load(file)
+            except json.JSONDecodeError:
+                data = []
+
+    data.append(new_entry)
+    with open(filename, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)
