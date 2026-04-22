@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/{hive_id}")
 async def get_sensor_readings(
-    hive_id: str,
+    hive_id: int,
     db: AsyncSession = Depends(get_async_session),
     _=Depends(current_active_user),
 ):

@@ -25,7 +25,7 @@ async def get_my_hives(
     for hive in hives:
         r = await db.execute(
             select(SensorReading)
-            .where(SensorReading.hive_id == str(hive.id))
+            .where(SensorReading.hive_id == hive.id)
             .order_by(SensorReading.recorded_at.desc())
             .limit(1)
         )
