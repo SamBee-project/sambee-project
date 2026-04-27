@@ -25,7 +25,6 @@ export interface Inspection {
   temperament: "calm" | "normal" | "aggressive";
   signs: string[];
   notes: string;
-  images?: string[];
 }
 
 export interface Alert {
