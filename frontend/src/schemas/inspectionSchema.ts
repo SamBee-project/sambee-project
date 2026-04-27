@@ -13,7 +13,6 @@ export const inspectionSchema = z.object({
   }),
   signs: z.array(z.string()).default([]),
   notes: z.string().min(10, "Notes must be at least 10 characters"),
-  images: z.array(z.string()).optional(),
 });
 
 export type InspectionFormData = z.infer<typeof inspectionSchema>;
