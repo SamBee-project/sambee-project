@@ -78,7 +78,7 @@ export const apiSlice = createApi({
 
     getInspections: builder.query<Inspection[], string | void>({
       query: (hiveId) =>
-        hiveId ? `/inspections?hiveId=${hiveId}` : "/inspections",
+        hiveId ? `inspections/?hiveId=${hiveId}` : "inspections/",
       providesTags: ["Inspections"],
     }),
 
@@ -87,7 +87,7 @@ export const apiSlice = createApi({
       Omit<Inspection, "id" | "hiveName">
     >({
       query: (newInspection) => ({
-        url: "/inspections",
+        url: "inspections/",
         method: "POST",
         body: newInspection,
       }),
