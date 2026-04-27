@@ -341,6 +341,39 @@ export default function Inspections() {
                 </div>
 
                 <div>
+                  <Label htmlFor="signs" className="text-gray-300">
+                    Observations (comma-separated)
+                  </Label>
+                  <Controller
+                    name="signs"
+                    control={control}
+                    render={({ field }) => (
+                      <Textarea
+                        id="signs"
+                        {...field}
+                        value={field.value ? field.value.join(", ") : ""}
+                        onChange={(e) => {
+                          field.onChange(
+                            e.target.value
+                              .split(",")
+                              .map((s) => s.trim())
+                              .filter(Boolean),
+                          );
+                        }}
+                        placeholder="e.g., mites, chalkbrood, low honey stores"
+                        rows={3}
+                        className="bg-black/50 border-yellow-500/30 text-white placeholder:text-gray-500"
+                      />
+                    )}
+                  />
+                  {errors.signs && (
+                    <p className="text-red-400 text-xs mt-1">
+                      {errors.signs.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
                   <Label htmlFor="notes" className="text-gray-300">
                     Notes *
                   </Label>

@@ -66,11 +66,11 @@ export const apiSlice = createApi({
 
         return {
           ...latestData,
-          lastInspection: latestData.recorded_at || latestData.created_at,
-          honeyProduction: latestData.weight || 0,
-          health: latestData.health || "good",
-          queenStatus: latestData.queenStatus || "healthy",
-          name: latestData.name || `Hive #${latestData.hive_id}`,
+          lastInspection: latestData?.recorded_at || latestData?.created_at,
+          honeyProduction: latestData?.weight || 0,
+          health: latestData?.health || "good",
+          queenStatus: latestData?.queenStatus || "healthy",
+          name: latestData?.name || `Hive #${latestData?.hive_id}`,
         };
       },
       providesTags: (result, error, id) => [{ type: "Hives", id }],
